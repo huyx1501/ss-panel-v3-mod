@@ -1094,6 +1094,15 @@ class UserController extends BaseController
 			}
 		}
 		
+		$level=$shop->level();
+		$user=$this->user;
+		if($user->class<$level)
+		{
+			$res['ret'] = 0;
+			$res['msg'] = "当前用户等级无法购买此商品";
+			return $response->getBody()->write(json_encode($res));
+		}
+
 		$price=$shop->price*((100-$credit)/100);
 		$user=$this->user;
 		if($user->money<$price)

@@ -27,6 +27,9 @@ class Shop extends Model
 				case "class":
 					$content_text .= "为账号升级为等级 ".$value." ,有效期 ".$content["class_expire"]." 天";
 					break;
+				case "level":
+					$content_text .= "可购买用户最低等级 ".$value." 级";
+					break;
 				default:
 			}
 			
@@ -92,6 +95,19 @@ class Shop extends Model
 		if(isset($content->class_expire))
 		{
 			return $content->class_expire;
+		}
+		else
+		{
+			return 0;
+		}
+    }
+	
+	public function level()
+    {
+        $content =  json_decode($this->attributes['content']);
+		if(isset($content->level))
+		{
+			return $content->level;
 		}
 		else
 		{

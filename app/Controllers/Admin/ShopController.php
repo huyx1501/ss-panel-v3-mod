@@ -50,6 +50,11 @@ class ShopController extends AdminController
 		{
 			$content["class_expire"]=$request->getParam('class_expire');
 		}
+
+        if($request->getParam('level')!=0)
+		{
+			$content["level"]=$request->getParam('level');
+		}
 		
 		$shop->content=json_encode($content);
 		
@@ -114,6 +119,11 @@ class ShopController extends AdminController
 		if($request->getParam('class_expire')!=0)
 		{
 			$content["class_expire"]=$request->getParam('class_expire');
+		}
+
+        if($request->getParam('level')!=0)
+		{
+			$content["level"]=$request->getParam('level');
 		}
 		
 		$shop->content=json_encode($content);
