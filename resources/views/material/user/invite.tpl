@@ -158,9 +158,18 @@
 				data: {
                     gennum: $("#gennum").val()
                 },
-                success: function (data) {
-                    window.location.reload();
-                },
+				success: function (data) {
+                    if (data.ret) {
+                        $("#result").modal();
+                        $("#msg").html(data.msg);
+                        window.setTimeout("location.href='/user/invite'", {$config['jump_delay']});
+					}
+                    else
+					{
+						$("#result").modal();
+                        $("#msg").html(data.msg+"。");
+					}
+				},
                 error: function (jqXHR) {
                     $("#result").modal();
 					$("#msg").html("发生错误：" + jqXHR.status);

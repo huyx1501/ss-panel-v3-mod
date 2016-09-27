@@ -890,7 +890,7 @@ class UserController extends BaseController
 			$res['msg'] = "失败";
             return $response->getBody()->write(json_encode($res));
         }
-		if ($n < $gennum) {
+		if ($n < $gennum | $gennum <= 0) {
 			$res['ret'] = 0;
 			$res['msg'] = "数量输入有误";
             return $response->getBody()->write(json_encode($res));
