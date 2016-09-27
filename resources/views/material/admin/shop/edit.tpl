@@ -37,6 +37,10 @@
 									<input class="form-control" id="auto_renew" type="text" value="{$shop->auto_renew}">
 								</div>
 								
+                                <div class="form-group form-group-label">
+									<label class="floating-label" for="level">限制最低够买等级（低于这个等级无法购买此商品）</label>
+									<input class="form-control" id="level" type="text" value="{$shop->level()}">
+								</div>                            
 								
 								
 							</div>
@@ -161,7 +165,8 @@
                     bandwidth: $("#bandwidth").val(),
                     expire: $("#expire").val(),
                     class: $("#class").val(),
-					class_expire: $("#class_expire").val()
+					class_expire: $("#class_expire").val(),
+					level: $("#level").val()
                 },
                 success: function (data) {
                     if (data.ret) {
