@@ -883,20 +883,26 @@ class UserController extends BaseController
 
     public function doInvite($request, $response, $args)
     {
+		$gennum = $request->getParam('gennum');
         $n = $this->user->invite_num;
         if ($n < 1) {
             $res['ret'] = 0;
 			$res['msg'] = "失败";
             return $response->getBody()->write(json_encode($res));
         }
-        for ($i = 0; $i < $n; $i++) {
+		if ($n < $gennum) {
+			$res['ret'] = 0;
+			$res['msg'] = "数量输入有误";
+            return $response->getBody()->write(json_encode($res));
+		}
+        for ($i = 0; $i < $gennum; $i++) {
             $char = Tools::genRandomChar(32);
             $code = new InviteCode();
             $code->code = $char;
             $code->user_id = $this->user->id;
             $code->save();
         }
-        $this->user->invite_num = 0;
+        $this->user->invite_num = $n-$gennum;
         $this->user->save();
         $res['ret'] = 1;
 		$res['msg'] = "生成成功。";

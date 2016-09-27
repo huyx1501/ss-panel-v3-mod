@@ -76,6 +76,10 @@
 										<p class="card-heading">邀请</p>
 										<p>当前您可以生成<code>{$user->invite_num}</code>个邀请码。 </p>
 									</div>
+                                    <div class="form-group form-group-label">
+                                        <label class="floating-label" for="gennum">生成邀请码数量</label>
+                                        <input class="form-control" id="gennum" type="number">
+									</div>
 									{if $user->invite_num }
 									<div class="card-action">
 										<div class="card-action-btn pull-left">
@@ -151,6 +155,9 @@
                 type: "POST",
                 url: "/user/invite",
                 dataType: "json",
+				data: {
+                    gennum: $("#gennum").val()
+                },
                 success: function (data) {
                     window.location.reload();
                 },
