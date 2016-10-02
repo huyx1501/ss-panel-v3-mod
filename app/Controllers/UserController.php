@@ -1525,6 +1525,13 @@ class UserController extends BaseController
     {
         $user = Auth::getUser();
         $pwd = $request->getParam('sspwd');
+        
+        if ($pwd == "") {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+        
         $user->updateSsPwd($pwd);
         $res['ret'] = 1;
 
@@ -1542,6 +1549,13 @@ class UserController extends BaseController
         $user = Auth::getUser();
         $method = $request->getParam('method');
         $method = strtolower($method);
+        
+        if ($method == "") {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+        
         $user->updateMethod($method);
         $res['ret'] = 1;
         return $this->echoJson($response, $res);
