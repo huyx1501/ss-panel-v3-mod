@@ -626,6 +626,11 @@ class UserController extends BaseController
 						if ($node->custom_method) {
 							$ary['method'] = $this->user->method;
 						}
+						
+						if ($node->custom_rss) {
+							$ary['obfs'] = str_replace("_compatible","",$this->user->obfs);
+							$ary['protocol'] = str_replace("_compatible","",$this->user->protocol);
+						}
 					}
 					else
 					{
@@ -636,6 +641,7 @@ class UserController extends BaseController
 						$ary['server_port'] = $mu_user->port;
 						$ary['password'] = $mu_user->passwd;
 						$ary['method'] = $node->method;
+						
 						if ($node->custom_method) {
 							$ary['method'] = $mu_user->method;
 						}
