@@ -565,6 +565,11 @@ class UserController extends BaseController
 				if($user->class>=$node->node_class&&($user->node_group==$node->node_group||$node->node_group==0)&&($node->node_bandwidth_limit==0||$node->node_bandwidth<$node->node_bandwidth_limit))
 				{
 					$ary['server'] = $node->server;
+					$ary['local_address'] = '127.0.0.1';
+					$ary['local_port'] = 1080;
+					$ary['timeout'] = 300;	
+					$ary['fast_open'] = 'false';
+					$ary['workers'] = 1;				
 					
 					$is_mu = 0;
 					
@@ -576,6 +581,11 @@ class UserController extends BaseController
 						if ($node->custom_method) {
 							$ary['method'] = $this->user->method;
 						}
+						
+						if ($node->custom_rss) {
+							$ary['obfs'] = str_replace("_compatible","",$this->user->obfs);
+							$ary['protocol'] = str_replace("_compatible","",$this->user->protocol);
+						}
 					}
 					else
 					{
@@ -586,9 +596,16 @@ class UserController extends BaseController
 						$ary['server_port'] = $mu_user->port;
 						$ary['password'] = $mu_user->passwd;
 						$ary['method'] = $node->method;
+						
 						if ($node->custom_method) {
 							$ary['method'] = $mu_user->method;
 						}
+
+						if ($node->custom_rss) {
+							$ary['obfs'] = str_replace("_compatible","",$this->user->obfs);
+							$ary['protocol'] = str_replace("_compatible","",$this->user->protocol);
+						}
+
 						$is_mu = 1;
 					}
 					
@@ -791,11 +808,10 @@ class UserController extends BaseController
         }
 		$paybacks = Payback::where("ref_by",$this->user->id)->orderBy("datetime","desc")->paginate(15, ['*'], 'page', $pageNum);
 		$paybacks->setPath('/user/profile');
-		
-		
+
 		$userip=array();
 		
-		$total = Ip::where("datetime",">=",time()-86400)->where('userid', '=',$this->user->id)->get();
+		$total = Ip::where("datetime",">=",time()-300)->where('userid', '=',$this->user->id)->get();
 		
 		$iplocation = new QQWry(); 
 		foreach($total as $single)
@@ -830,7 +846,7 @@ class UserController extends BaseController
 		
 		
 		
-        return $this->view()->assign("userloginip",$userloginip)->assign("userip",$userip)->assign("paybacks",$paybacks)->display('user/profile.tpl');
+        return $this->view()->assign("userip",$userip)->assign("userloginip",$userloginip)->assign("paybacks",$paybacks)->display('user/profile.tpl');
     }
 	
 	
@@ -1395,6 +1411,18 @@ class UserController extends BaseController
             return $response->getBody()->write(json_encode($res));
         }
 		
+		if (!Tools::is_validate($obfs)) {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+		
+		if (!Tools::is_validate($protocol)) {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+		
         $antiXss = new AntiXSS();
 		
 		$user->protocol = $antiXss->xss_clean($protocol);
@@ -1475,6 +1503,19 @@ class UserController extends BaseController
     {
         $user = Auth::getUser();
         $pwd = $request->getParam('sspwd');
+        
+        if ($pwd == "") {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+		
+	if (!Tools::is_validate($pwd)) {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+        
         $user->updateSsPwd($pwd);
         $res['ret'] = 1;
 
@@ -1492,6 +1533,19 @@ class UserController extends BaseController
         $user = Auth::getUser();
         $method = $request->getParam('method');
         $method = strtolower($method);
+        
+        if ($method == "") {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+
+	if (!Tools::is_validate($method)) {
+            $res['ret'] = 0;
+            $res['msg'] = "悟空别闹";
+            return $response->getBody()->write(json_encode($res));
+        }
+        
         $user->updateMethod($method);
         $res['ret'] = 1;
         return $this->echoJson($response, $res);

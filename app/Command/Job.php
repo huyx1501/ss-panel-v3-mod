@@ -44,20 +44,23 @@ class Job
 	public static function backup()
 	{
 		mkdir('/tmp/ssmodbackup/');
+
+		$db_address_array = explode(':',Config::get('db_host'));
 		
-		system('mysqldump --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.Config::get('db_host').' '.Config::get('db_database').' announcement auto blockip bought code coupon disconnect_ip link login_ip payback radius_ban shop speedtest ss_invite_code ss_node ss_password_reset ticket unblockip user user_token email_verify detect_list> /tmp/ssmodbackup/mod.sql',$ret);
+		system('mysqldump --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.$db_address_array[0].' '.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').' '.Config::get('db_database').' announcement auto blockip bought code coupon disconnect_ip link login_ip payback radius_ban shop speedtest ss_invite_code ss_node ss_password_reset ticket unblockip user user_token email_verify detect_list > /tmp/ssmodbackup/mod.sql',$ret);
 		
-		
-		system('mysqldump --opt --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.Config::get('db_host').' -d '.Config::get('db_database').' alive_ip ss_node_info ss_node_online_log user_traffic_log detect_log>> /tmp/ssmodbackup/mod.sql',$ret);
+		system('mysqldump --opt --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.$db_address_array[0].' '.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').' -d '.Config::get('db_database').' alive_ip ss_node_info ss_node_online_log user_traffic_log detect_log >> /tmp/ssmodbackup/mod.sql',$ret);
 		
 		if(Config::get('enable_radius')=='true')
 		{
-			system('mysqldump --user='.Config::get('radius_db_user').' --password='.Config::get('radius_db_password').' --host='.Config::get('radius_db_host').' '.Config::get('radius_db_database').'> /tmp/ssmodbackup/radius.sql',$ret);
+			$db_address_array = explode(':',Config::get('radius_db_host'));
+			system('mysqldump --user='.Config::get('radius_db_user').' --password='.Config::get('radius_db_password').' --host='.$db_address_array[0].' '.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').''.Config::get('radius_db_database').'> /tmp/ssmodbackup/radius.sql',$ret);
 		}
 		
 		if(Config::get('enable_wecenter')=='true')
 		{
-			system('mysqldump --user='.Config::get('wecenter_db_user').' --password='.Config::get('wecenter_db_password').' --host='.Config::get('wecenter_db_host').' '.Config::get('wecenter_db_database').'> /tmp/ssmodbackup/wecenter.sql',$ret);
+			$db_address_array = explode(':',Config::get('wecenter_db_host'));
+			system('mysqldump --user='.Config::get('wecenter_db_user').' --password='.Config::get('wecenter_db_password').' --host='.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').' '.Config::get('wecenter_db_database').'> /tmp/ssmodbackup/wecenter.sql',$ret);
 		}
 	
 		system("cp ".Config::get('auto_backup_webroot')."/config/.config.php /tmp/ssmodbackup/",$ret);
@@ -388,7 +391,7 @@ class Job
 			}
 		}
 		
-		
+		Ip::where("datetime","<",time()-300)->delete();
 		
 
 		$adminUser = User::where("is_admin","=","1")->get();
@@ -646,7 +649,7 @@ class Job
 				
 			}
 			
-			if(strtotime($user->expire_in)<time()&&strtotime($user->expire_in)>=time()-60)
+			if(strtotime($user->expire_in)<time() && $user->transfer_enable != Tools::toGB(Config::get('enable_account_expire_reset_traffic')))
 			{
 				if(Config::get('enable_account_expire_reset')=='true')
 				{
@@ -669,7 +672,7 @@ class Job
 				}
 			}
 			
-			if(strtotime($user->expire_in)+((int)Config::get('enable_account_expire_delete_days')*86400)<time()&&strtotime($user->expire_in)+((int)Config::get('enable_account_expire_delete_days')*86400)>=time()-60)
+			if(strtotime($user->expire_in)+((int)Config::get('enable_account_expire_delete_days')*86400)<time())
 			{
 				if(Config::get('enable_account_expire_delete')=='true')
 				{
@@ -701,7 +704,7 @@ class Job
 			
 			
 			
-			if((int)Config::get('enable_auto_clean_uncheck_days')!=0 && $user->last_check_in_time+((int)Config::get('enable_auto_clean_uncheck_days')*86400)<time() && $user->last_check_in_time+((int)Config::get('enable_auto_clean_uncheck_days')*86400)>=time()-60 && $user->class == 0)
+			if((int)Config::get('enable_auto_clean_uncheck_days')!=0 && max($user->last_check_in_time,strtotime($user->reg_date)) + ((int)Config::get('enable_auto_clean_uncheck_days')*86400) < time() && $user->class == 0)
 			{
 				if(Config::get('enable_auto_clean_uncheck')=='true')
 				{
@@ -732,7 +735,7 @@ class Job
 			}
 			
 			
-			if((int)Config::get('enable_auto_clean_unused_days')!=0 && $user->t+((int)Config::get('enable_auto_clean_unused_days')*86400)<time() && $user->t+((int)Config::get('enable_auto_clean_unused_days')*86400)>=time()-60 && $user->class == 0)
+			if((int)Config::get('enable_auto_clean_unused_days')!=0 && max($user->t,strtotime($user->reg_date)) + ((int)Config::get('enable_auto_clean_unused_days')*86400) < time() && $user->class == 0)
 			{
 				if(Config::get('enable_auto_clean_unused')=='true')
 				{
@@ -762,7 +765,7 @@ class Job
 				}
 			}
 			
-			if($user->class!=0&&strtotime($user->class_expire)>=time()-60&&strtotime($user->class_expire)<time())
+			if($user->class!=0 && $user->transfer_enable != Tools::toGB(Config::get('enable_class_expire_reset_traffic')) && strtotime($user->class_expire)<time() && strtotime($user->class_expire) > 1420041600)
 			{
 				if(Config::get('enable_class_expire_reset')=='true')
 				{
