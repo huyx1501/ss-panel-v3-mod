@@ -44,20 +44,23 @@ class Job
 	public static function backup()
 	{
 		mkdir('/tmp/ssmodbackup/');
+
+		$db_address_array = explode(':',Config::get('db_host'));
 		
-		system('mysqldump --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.Config::get('db_host').' '.Config::get('db_database').' announcement auto blockip bought code coupon disconnect_ip link login_ip payback radius_ban shop speedtest ss_invite_code ss_node ss_password_reset ticket unblockip user user_token email_verify detect_list> /tmp/ssmodbackup/mod.sql',$ret);
+		system('mysqldump --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.$db_address_array[0].' '.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').' '.Config::get('db_database').' announcement auto blockip bought code coupon disconnect_ip link login_ip payback radius_ban shop speedtest ss_invite_code ss_node ss_password_reset ticket unblockip user user_token email_verify detect_list paylist> /tmp/ssmodbackup/mod.sql',$ret);
 		
-		
-		system('mysqldump --opt --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.Config::get('db_host').' -d '.Config::get('db_database').' alive_ip ss_node_info ss_node_online_log user_traffic_log detect_log>> /tmp/ssmodbackup/mod.sql',$ret);
+		system('mysqldump --opt --user='.Config::get('db_username').' --password='.Config::get('db_password').' --host='.$db_address_array[0].' '.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').' -d '.Config::get('db_database').' alive_ip ss_node_info ss_node_online_log user_traffic_log detect_log >> /tmp/ssmodbackup/mod.sql',$ret);
 		
 		if(Config::get('enable_radius')=='true')
 		{
-			system('mysqldump --user='.Config::get('radius_db_user').' --password='.Config::get('radius_db_password').' --host='.Config::get('radius_db_host').' '.Config::get('radius_db_database').'> /tmp/ssmodbackup/radius.sql',$ret);
+			$db_address_array = explode(':',Config::get('radius_db_host'));
+			system('mysqldump --user='.Config::get('radius_db_user').' --password='.Config::get('radius_db_password').' --host='.$db_address_array[0].' '.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').''.Config::get('radius_db_database').'> /tmp/ssmodbackup/radius.sql',$ret);
 		}
 		
 		if(Config::get('enable_wecenter')=='true')
 		{
-			system('mysqldump --user='.Config::get('wecenter_db_user').' --password='.Config::get('wecenter_db_password').' --host='.Config::get('wecenter_db_host').' '.Config::get('wecenter_db_database').'> /tmp/ssmodbackup/wecenter.sql',$ret);
+			$db_address_array = explode(':',Config::get('wecenter_db_host'));
+			system('mysqldump --user='.Config::get('wecenter_db_user').' --password='.Config::get('wecenter_db_password').' --host='.(isset($db_address_array[1])?'-P '.$db_address_array[1]:'').' '.Config::get('wecenter_db_database').'> /tmp/ssmodbackup/wecenter.sql',$ret);
 		}
 	
 		system("cp ".Config::get('auto_backup_webroot')."/config/.config.php /tmp/ssmodbackup/",$ret);
@@ -388,7 +391,7 @@ class Job
 			}
 		}
 		
-		
+		Ip::where("datetime","<",time()-300)->delete();
 		
 
 		$adminUser = User::where("is_admin","=","1")->get();
@@ -425,8 +428,9 @@ class Job
 							echo $e->getMessage();
 						}
 						
-						Telegram::Send("姐姐姐姐，面板程序有更新了呢~看看你的邮箱吧~");
 					}
+					
+					Telegram::Send("姐姐姐姐，面板程序有更新了呢~看看你的邮箱吧~");
 					
 					$myfile = fopen(BASE_PATH."/storage/update.md5", "w+") or die("Unable to open file!");
 					$txt = "1";
@@ -444,7 +448,7 @@ class Job
 			
 			foreach($nodes as $node){
 				if(time()-$node->node_heartbeat>300&&time()-$node->node_heartbeat<=360&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8))
-				{
+				{	
 					foreach($adminUser as $user)
 					{
 						echo "Send offline mail to user: ".$user->id;
@@ -497,18 +501,20 @@ class Job
 									{								
 										$api->record->recordUpdate($domain_id, $record->host, $Temp_node->server, 'CNAME', 55, 60, 1, '', $record_id);
 									}
+
+									$notice_text = "喵喵喵~ ".$node->name." 节点掉线了喵~域名解析被切换到了 ".$Temp_node->name." 上了喵~";
 								}
 							}
-							
-							Telegram::Send("喵喵喵~ ".$node->name." 节点掉线了喵~域名解析被切换到了 ".$Temp_node->name." 上了喵~");
 						}
 						else
 						{
-							Telegram::Send("喵喵喵~ ".$node->name." 节点掉线了喵~");
+							$notice_text = "喵喵喵~ ".$node->name." 节点掉线了喵~";
 						}
 						
 						
 					}
+
+					Telegram::Send($notice_text);
 					
 					$myfile = fopen(BASE_PATH."/storage/".$node->id.".offline", "w+") or die("Unable to open file!");
 					$txt = "1";
@@ -568,14 +574,16 @@ class Job
 							}
 							
 							
-							Telegram::Send("喵喵喵~ ".$node->name." 节点恢复了喵~域名解析被切换回来了喵~");
+							$notice_text = "喵喵喵~ ".$node->name." 节点恢复了喵~域名解析被切换回来了喵~";
 						}
 						else
 						{
-							Telegram::Send("喵喵喵~ ".$node->name." 节点恢复了喵~");
+							$notice_text = "喵喵喵~ ".$node->name." 节点恢复了喵~";
 						}
 						
 					}
+
+					Telegram::Send($notice_text);
 					
 					unlink(BASE_PATH."/storage/".$node->id.".offline");
 				}
@@ -701,7 +709,7 @@ class Job
 			
 			
 			
-			if((int)Config::get('enable_auto_clean_uncheck_days')!=0 && $user->last_check_in_time+((int)Config::get('enable_auto_clean_uncheck_days')*86400)<time() && $user->class == 0)
+			if((int)Config::get('enable_auto_clean_uncheck_days')!=0 && max($user->last_check_in_time,strtotime($user->reg_date)) + ((int)Config::get('enable_auto_clean_uncheck_days')*86400) < time() && $user->class == 0)
 			{
 				if(Config::get('enable_auto_clean_uncheck')=='true')
 				{
@@ -732,7 +740,7 @@ class Job
 			}
 			
 			
-			if((int)Config::get('enable_auto_clean_unused_days')!=0 && $user->t+((int)Config::get('enable_auto_clean_unused_days')*86400)<time() && $user->class == 0)
+			if((int)Config::get('enable_auto_clean_unused_days')!=0 && max($user->t,strtotime($user->reg_date)) + ((int)Config::get('enable_auto_clean_unused_days')*86400) < time() && $user->class == 0)
 			{
 				if(Config::get('enable_auto_clean_unused')=='true')
 				{
@@ -762,7 +770,7 @@ class Job
 				}
 			}
 			
-			if($user->class!=0 && $user->transfer_enable != Tools::toGB(Config::get('enable_class_expire_reset_traffic')) && strtotime($user->class_expire)<time())
+			if($user->class!=0 && $user->transfer_enable != Tools::toGB(Config::get('enable_class_expire_reset_traffic')) && strtotime($user->class_expire)<time() && strtotime($user->class_expire) > 1420041600)
 			{
 				if(Config::get('enable_class_expire_reset')=='true')
 				{

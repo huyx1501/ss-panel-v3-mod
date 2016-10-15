@@ -120,11 +120,11 @@ class Tools
     }
 	
 	
-	public function base64_url_encode($input) {
+	public static function base64_url_encode($input) {
 		return strtr(base64_encode($input), '+/', '-_');
 	}
 
-	public function base64_url_decode($input) {
+	public static function base64_url_decode($input) {
 		return base64_decode(strtr($input, '-_', '+/'));
 	}
 	
@@ -141,6 +141,17 @@ class Tools
 			closedir ( $handle );
 		}
 		return $dirArray;
+	}
+	
+	
+	public static function is_validate($str)
+	{
+		$pattern = "/[^A-Za-z0-9\-_\.]/";
+		if (preg_match($pattern, $str))
+		{
+			return false;
+		}
+		return true;
 	}
 	
 }
