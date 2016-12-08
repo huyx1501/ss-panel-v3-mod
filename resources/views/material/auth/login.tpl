@@ -14,11 +14,12 @@
 									</div>
 								</div>
 								<div class="card-inner">
-									<p class="text-center">
-										<span class="avatar avatar-inline avatar-lg">
-											<img alt="Login" src="/theme/material/images/users/avatar-001.jpg">
-										</span>
-									</p>
+									<form action="javascript:void(0);"  method="POST">
+										<p class="text-center">
+											<span class="avatar avatar-inline avatar-lg">
+												<img alt="Login" src="/theme/material/images/users/avatar-001.jpg">
+											</span>
+										</p>
 									
 										<div class="form-group form-group-label">
 											<div class="row">
@@ -76,7 +77,7 @@
 												</div>
 											</div>
 										</div>
-									
+									</form>
 								</div>
 							</div>
 						</div>
@@ -129,7 +130,7 @@
                     email: $("#email").val(),
                     passwd: $("#passwd").val(),
 					code: $("#code").val(),
-                    remember_me: $("#remember_me").val(){if $geetest_html != null},
+                    remember_me: $("#remember_me:checked").val(){if $geetest_html != null},
 					geetest_challenge: validate.geetest_challenge,
                     geetest_validate: validate.geetest_validate,
                     geetest_seccode: validate.geetest_seccode{/if}
@@ -140,16 +141,22 @@
                         $("#msg").html(data.msg);
                         window.setTimeout("location.href='/user'", {$config['jump_delay']});
                     }else{
-						$("#result").modal();
+			$("#result").modal();
                         $("#msg").html(data.msg);
-						document.getElementById("login").disabled = false; 
+			document.getElementById("login").disabled = false;
+			{if $geetest_html != null}
+			captcha.refresh();
+			{/if} 
                     }
                 },
                 error:function(jqXHR){
-                    $("#msg-error").hide(10);
-                    $("#msg-error").show(100);
-                    $("#msg-error-p").html("发生错误："+jqXHR.status);
+			$("#msg-error").hide(10);
+			$("#msg-error").show(100);
+			$("#msg-error-p").html("发生错误："+jqXHR.status);
 					document.getElementById("login").disabled = false; 
+			{if $geetest_html != null}
+			captcha.refresh();
+			{/if}
                 }
             });
         }
@@ -179,11 +186,13 @@
         // 将验证码加到id为captcha的元素里
 		
 		captchaObj.onSuccess(function () {
-            validate = captchaObj.getValidate();
-        });
+            		validate = captchaObj.getValidate();
+		});
 		
-        captchaObj.appendTo("#embed-captcha");
-        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+		captchaObj.appendTo("#embed-captcha");
+
+		captcha = captchaObj;
+		// 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
     };
 	
 	initGeetest({

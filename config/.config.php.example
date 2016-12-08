@@ -24,7 +24,6 @@ $System_Config['muKey'] = '';
 $System_Config['mailDriver'] = 'mailgun';   // mailgun or smtp
 
 // 用户签到设置
-$System_Config['checkinTime'] = '24';      // 签到间隔时间 单位小时
 $System_Config['checkinMin'] = '1989';       // 签到最少流量 单位MB
 $System_Config['checkinMax'] = '8964';       // 签到最多流量
 
@@ -285,3 +284,6 @@ $System_Config['telegram_chatid']='';
 
 #多用户混淆参数后缀
 $System_Config['mu_suffix']='baidu.com';
+
+#多用户混淆参数表达式，%5m代表取用户特征 md5 的前五位，%id 代表用户id,%suffix 代表上面这个后缀。
+$System_Config['mu_regex']='%5m%id.%suffix';
