@@ -647,3 +647,20 @@ ALTER TABLE `detect_log` ADD `node_id` INT NOT NULL AFTER `datetime`;
 
 ALTER TABLE `user` ADD `is_multi_user` INT NOT NULL DEFAULT '0' AFTER `is_hide`;
 
+ALTER TABLE `ss_node` ADD `mu_only` INT NULL DEFAULT '0' AFTER `custom_rss`;
+
+CREATE TABLE IF NOT EXISTS `relay` (
+  `id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `source_node_id` bigint(20) NOT NULL,
+  `dist_node_id` bigint(20) NOT NULL,
+  `dist_ip` text NOT NULL,
+  `port` int(11) NOT NULL,
+  `priority` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `relay`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `relay`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;

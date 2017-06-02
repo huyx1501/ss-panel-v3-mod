@@ -60,6 +60,15 @@
 											</label>
 										</div>
 									</div>
+									
+									<div class="form-group form-group-label">
+										<div class="checkbox switch">
+											<label for="mu_only">
+												<input {if $node->mu_only==1}checked{/if} class="access-hide" id="mu_only" type="checkbox" name="mu_only"><span class="switch-toggle"></span>只启用单端口多用户
+											</label>
+										</div>
+									</div>
+									
 									{/if}
 									
 									
@@ -97,6 +106,7 @@
 													<option value="7" {if $node->sort==7}selected{/if}>PAC PLUS(Socks 代理生成 PAC文件)</option>
 													<option value="8" {if $node->sort==8}selected{/if}>PAC PLUS PLUS(HTTPS 代理生成 PAC文件)</option>
 													<option value="9" {if $node->sort==9}selected{/if}>Shadowsocks 单端口多用户</option>
+													<option value="10" {if $node->sort==10}selected{/if}>Shadowsocks 中转</option>
 												</select>
 											</div>
 									</div>
@@ -221,6 +231,16 @@
 			{
 				var custom_rss=0;
 			}
+			
+			if(document.getElementById('mu_only').checked)
+			{
+				var mu_only=1;
+			}
+			else
+			{
+				var mu_only=0;
+			}
+			
 			{/if}
 			
 			
@@ -246,8 +266,10 @@
 					class: $("#class").val(),
 					node_bandwidth_limit: $("#node_bandwidth_limit").val(),
 					bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(){/literal}{if $config['enable_rss']=='true'},
-					custom_rss: custom_rss{else},
-					custom_rss: 0
+					custom_rss: custom_rss,
+					mu_only: mu_only{else},
+					custom_rss: 0,
+					mu_only: 0
 					{/if}
 					{literal}
                 },

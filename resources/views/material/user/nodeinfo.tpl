@@ -57,11 +57,11 @@
 								<div class="card-main">
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">客户端下载</p>
-										<p><a href="https://bit.no.com:43110/shadowsocksr.bit"><i class="icon icon-lg">desktop_windows</i>&nbsp;Windows</a> 选择 C# 版</p>
-										<p><a href="https://github.com/qinyuhang/ShadowsocksX-NG/releases"><i class="icon icon-lg">laptop_mac</i>&nbsp;Mac OS X</a></p>
-										<p><a href="https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client"><i class="icon icon-lg">laptop_windows</i>&nbsp;Linux</a></p>
-										<p><a href="https://bit.no.com:43110/shadowsocksr.bit"><i class="icon icon-lg">android</i>&nbsp;Android</a> 选择 Android 版</p>
-										<p><a href="https://itunes.apple.com/us/app/shadowrocket/id932747118"><i class="icon icon-lg">phone_iphone</i>&nbsp;iOS</a></p>
+										<p><i class="icon icon-lg">desktop_windows</i>&nbsp;<a href="/ssr-download/ssr-win.7z">Windows</a></p>
+										<p><i class="icon icon-lg">laptop_mac</i>&nbsp;<a href="/ssr-download/ssr-mac.dmg">Mac OS X</a></p>
+										<p><i class="icon icon-lg">laptop_windows</i>&nbsp;<a href="https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client">Linux</a></p>
+										<p><i class="icon icon-lg">android</i>&nbsp;<a href="/ssr-download/ssr-android.apk">Android</a></p>
+										<p><i class="icon icon-lg">phone_iphone</i>&nbsp;<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">iOS</a></p>
 									</div>
 									
 								</div>
@@ -85,10 +85,9 @@
 								<div class="card-main">
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">配置链接</p>
-										<input id="ss-qr-text" class="form-control" value="{$ssqr_s}">
-											{if $mu == 0}
-											<p><a href="{$ssqr}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给原版APP)</a></p>
-											{/if}
+										{if $mu == 0}
+										<p><a href="{$ssqr}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 原版/SSR APP)</a></p>
+										{/if}
 										{if $config['enable_rss']=='true'&&$node->custom_rss==1&&!($user->obfs=='plain'&&$user->protocol=='origin')}
 										<p><a href="{$ssqr_s_new}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 SSR)</a></p>
 										<p><a href="{$ssqr_s_new}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
@@ -98,8 +97,7 @@
 								</div>
 							</div>
 						</div>
-						
-						{if $config['enable_rss']=='true'&&$node->custom_rss==1&&!($user->obfs=='plain'&&$user->protocol=='origin')}
+							
 							{if $mu == 0}
 							<div class="col-lg-12 col-sm-12">
 								<div class="card">
@@ -107,7 +105,7 @@
 										<div class="card-inner margin-bottom-no">
 											<p class="card-heading">原版配置二维码</p>
 											<div class="text-center">
-												<div id="ss-qr-y"></div>
+												<div id="ss-qr"></div>
 											</div>
 										</div>
 										
@@ -122,7 +120,7 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">SSR 旧版(3.8.3之前)配置二维码</p>
 										<div class="text-center">
-											<div id="ss-qr"></div>
+											<div id="ss-qr-y"></div>
 										</div>
 									</div>
 									
@@ -144,23 +142,6 @@
 							</div>
 						</div>
 						
-						{else}
-						
-						<div class="col-lg-12 col-sm-12">
-							<div class="card">
-								<div class="card-main">
-									<div class="card-inner margin-bottom-no">
-										<p class="card-heading">配置二维码</p>
-										<div class="text-center">
-											<div id="ss-qr"></div>
-										</div>
-									</div>
-									
-								</div>
-							</div>
-						</div>
-						
-						{/if}
 						
 						{if $mu == 0}
 								<div class="col-lg-12 col-sm-12">
@@ -209,13 +190,12 @@
 
 <script src="/assets/public/js/jquery.qrcode.min.js"></script>
 <script>
-	var text_qrcode = '{$ssqr_s}';
+	var text_qrcode = '{$ssqr}';
 	jQuery('#ss-qr').qrcode({
 		"text": text_qrcode
 	});
 	
-	{if $config['enable_rss']=='true'&&$node->custom_rss==1&&!($user->obfs=='plain'&&$user->protocol=='origin')}
-	var text_qrcode1 = '{$ssqr}';
+	var text_qrcode1 = '{$ssqr_s}';
 	jQuery('#ss-qr-y').qrcode({
 		"text": text_qrcode1
 	});
@@ -224,6 +204,6 @@
 	jQuery('#ss-qr-n').qrcode({
 		"text": text_qrcode2
 	});
-	{/if}
+	
 
 </script>

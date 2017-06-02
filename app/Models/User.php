@@ -36,7 +36,7 @@ class User extends Model
     public function getGravatarAttribute()
     {
         $hash = md5(strtolower(trim($this->attributes['email'])));
-        return "https://avatar.zhaojin97.cn/avatar/".$hash;
+        return "https://secure.gravatar.com/avatar/".$hash;
     }
 
     public function isAdmin()
@@ -194,7 +194,7 @@ class User extends Model
     public function getGAurl()
     {
         $ga = new GA();
-        $url = $ga->getUrl(Config::get('appName')."-".$this->attributes['user_name']."-两步验证码",$this->attributes['ga_token']);
+        $url = $ga->getUrl(urlencode(Config::get('appName')."-".$this->attributes['user_name']."-两步验证码"),$this->attributes['ga_token']);
         return $url;
     }
 
@@ -202,6 +202,12 @@ class User extends Model
     {
         $uid = $this->attributes['id'];
         return InviteCode::where('user_id', $uid)->get();
+    }
+    
+    public function ref_by_user()
+    {
+        $uid = $this->attributes['ref_by'];
+        return User::where('id', $uid)->first();
     }
 
 }

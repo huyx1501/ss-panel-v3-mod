@@ -143,9 +143,9 @@ class Job
 		}
 
 		NodeInfoLog::where("log_time","<",time()-86400*3)->delete();
-		NodeOnlineLog::where("log_time","<",time()-86400*3)->delete();;
-		TrafficLog::where("log_time","<",time()-86400*3)->delete();;
-		DetectLog::where("datetime","<",time()-86400*3)->delete();;
+		NodeOnlineLog::where("log_time","<",time()-86400*3)->delete();
+		TrafficLog::where("log_time","<",time()-86400*3)->delete();
+		DetectLog::where("datetime","<",time()-86400*3)->delete();
 		Telegram::Send("姐姐姐姐，数据库被清理了，感觉身体被掏空了呢~");
 
 
@@ -170,7 +170,7 @@ class Job
 
 		#https://github.com/shuax/QQWryUpdate/blob/master/update.php
 
-		$copywrite = file_get_contents("http://update.cz88.net/ip/copywrite.rar");
+		$copywrite = file_get_contents("https://github.com/esdeathlove/qqwry-download/raw/master/copywrite.rar");
 
 		$adminUser = User::where("is_admin","=","1")->get();
 
@@ -180,7 +180,7 @@ class Job
 		if($newmd5 != $oldmd5)
 		{
 			file_put_contents(BASE_PATH."/storage/qqwry.md5",$newmd5);
-			$qqwry = file_get_contents("http://update.cz88.net/ip/qqwry.rar");
+			$qqwry = file_get_contents("https://github.com/esdeathlove/qqwry-download/raw/master/qqwry.rar");
 			if($qqwry != "")
 			{
 				$key = unpack("V6", $copywrite)[6];
@@ -210,14 +210,22 @@ class Job
 			unlink(BASE_PATH."/storage/qqwry.dat");
 			rename(BASE_PATH."/storage/qqwry.dat.bak",BASE_PATH."/storage/qqwry.dat");
 		}
+		
+		
 
 		if(Config::get('enable_auto_backup') == 'true')
 		{
 			Job::backup();
 		}
 
+		Job::updatedownload();
 
+	}
 
+	public static function updatedownload()
+	{
+		system('cd '.BASE_PATH."/public/ssr-download/ && git pull", $ret);
+		echo $ret;
 	}
 
 	public static function CheckJob()
@@ -355,6 +363,7 @@ class Job
 				$bought_new->datetime=time();
 				$bought_new->renew=time()+$shop->auto_renew*86400;
 				$bought_new->price=$bought->price;
+				$bought_new->coupon="";
 				$bought_new->save();
 
 				$subject = Config::get('appName')."-续费成功";
@@ -402,7 +411,7 @@ class Job
 
 		$adminUser = User::where("is_admin","=","1")->get();
 
-		$latest_content = file_get_contents("https://github.com/glzjin/ss-panel-v3-mod/raw/master/bootstrap.php");
+		$latest_content = file_get_contents("https://github.com/esdeathlove/ss-panel-v3-mod/raw/master/bootstrap.php");
 		$newmd5 = md5($latest_content);
 		$oldmd5 = md5(file_get_contents(BASE_PATH."/bootstrap.php"));
 
@@ -424,7 +433,7 @@ class Job
 						echo "Send mail to user: ".$user->id;
 						$subject = Config::get('appName')."-系统提示";
 						$to = $user->email;
-						$text = "管理员您好，系统发现有了新版本，您可以到 <a href=\"https://github.com/glzjin/ss-panel-v3-mod/issues\">https://github.com/glzjin/ss-panel-v3-mod/issues</a> 按照步骤进行升级。" ;
+						$text = "管理员您好，系统发现有了新版本，您可以到 <a href=\"https://github.com/esdeathlove/ss-panel-v3-mod/issues\">https://github.com/esdeathlove/ss-panel-v3-mod/issues</a> 按照步骤进行升级。" ;
 						try {
 							Mail::send($to, $subject, 'news/warn.tpl', [
 								"user" => $user,"text" => $text
@@ -453,7 +462,7 @@ class Job
 			$nodes = Node::all();
 
 			foreach($nodes as $node){
-				if(time()-$node->node_heartbeat>300&&time()-$node->node_heartbeat<=360&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8))
+				if(time()-$node->node_heartbeat>300&&time()-$node->node_heartbeat<=360&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10))
 				{
 					foreach($adminUser as $user)
 					{
@@ -531,7 +540,7 @@ class Job
 
 
 			foreach($nodes as $node){
-				if(time()-$node->node_heartbeat<60&&file_exists(BASE_PATH."/storage/".$node->id.".offline")&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8))
+				if(time()-$node->node_heartbeat<60&&file_exists(BASE_PATH."/storage/".$node->id.".offline")&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10))
 				{
 					foreach($adminUser as $user)
 					{

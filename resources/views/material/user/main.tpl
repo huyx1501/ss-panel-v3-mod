@@ -12,7 +12,7 @@
 	<!-- css -->
 	<link href="/theme/material/css/base.min.css" rel="stylesheet">
 	<link href="/theme/material/css/project.min.css" rel="stylesheet">
-	<link href="https://fonts.lug.ustc.edu.cn/icon?family=Material+Icons" rel="stylesheet">
+	<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	
 
 	
@@ -291,9 +291,13 @@
 									<i class="icon icon-lg">router</i>&nbsp;节点列表
 								</a>
 							</li>
-
 							
-
+							<li>
+								<a href="/user/relay">
+									<i class="icon icon-lg">compare_arrows</i>&nbsp;中转规则
+								</a>
+							</li>
+							
 							<li>
 								<a href="/user/trafficlog">
 									<i class="icon icon-lg">traffic</i>&nbsp;流量记录

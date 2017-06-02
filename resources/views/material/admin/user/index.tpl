@@ -112,7 +112,7 @@
 								{$user->im_value}
 								{/if}</th>
 								<th>{$user->reg_date}<br>{$user->reg_ip}　{$regloc[$user->id]}</th>
-                                <th>{$user->ref_by}</th>
+                                <th>{$user->ref_by} {$user->ref_by_user()->user_name}</th>
                                 
                             </tr>
                             {/foreach}
@@ -120,8 +120,8 @@
                         {$users->render()}
 					</div>
 					
-					<div aria-hidden="true" class="modal fade" id="delete_modal" role="dialog" tabindex="-1">
-						<div class="modal-dialog">
+					<div aria-hidden="true" class="modal modal-va-middle fade" id="delete_modal" role="dialog" tabindex="-1">
+						<div class="modal-dialog modal-xs">
 							<div class="modal-content">
 								<div class="modal-heading">
 									<a class="modal-close" data-dismiss="modal">×</a>

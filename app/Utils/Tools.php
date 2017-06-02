@@ -153,5 +153,25 @@ class Tools
 		}
 		return true;
 	}
+
+	public static function is_relay_rule_avaliable($rule, $ruleset, $node_id)
+	{
+		$cur_id = $rule->id;
+		
+		foreach($ruleset as $single_rule)
+		{
+			if($rule->port == $single_rule->port && ($node_id == $single_rule->source_node_id || $single_rule->source_node_id == 0) && (($rule->id != $single_rule->id && $rule->priority < $single_rule->priority)||($rule->id < $single_rule->id && $rule->priority == $single_rule->priority)))
+			{
+				$cur_id = $single_rule->id;
+			}
+		}
+
+		if($cur_id != $rule->id)
+		{
+			return False;
+		}
+		
+		return True;
+	}
 	
 }

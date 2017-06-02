@@ -41,7 +41,7 @@
                                 
                             </tr>
                             {foreach $nodes as $node}
-                            <tr>
+                            <tr {if $node->node_heartbeat!=0 && time()-$node->node_heartbeat>90}bgcolor="#e482a3"{/if}>
 								<td>
                                     <a class="btn btn-brand"  {if $node->sort==999}disabled{else}href="/admin/node/{$node->id}/edit"{/if}>编辑</a>
                                     <a class="btn btn-brand-accent" id="delete"  {if $node->sort==999}disabled{else}href="javascript:void(0);" onClick="delete_modal_show('{$node->id}')"{/if}>删除</a>
@@ -91,6 +91,10 @@
                                 <td>Shadowsocks - 单端口多用户</td>
 								{/if}
 								
+								{if $node->sort==10}
+                                <td>Shadowsocks - 中转</td>
+								{/if}
+								
 								{if $node->sort==999}
                                 <td>系统保留，请勿删除</td>
 								{/if}
@@ -108,8 +112,8 @@
 						</div>
 					</div>
 					
-					<div aria-hidden="true" class="modal fade" id="delete_modal" role="dialog" tabindex="-1">
-						<div class="modal-dialog">
+					<div aria-hidden="true" class="modal modal-va-middle fade" id="delete_modal" role="dialog" tabindex="-1">
+						<div class="modal-dialog modal-xs">
 							<div class="modal-content">
 								<div class="modal-heading">
 									<a class="modal-close" data-dismiss="modal">×</a>

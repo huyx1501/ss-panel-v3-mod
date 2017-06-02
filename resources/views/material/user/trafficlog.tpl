@@ -28,7 +28,7 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">注意!</p>
 										<p>部分节点不支持流量记录.</p>
-										<p>此处只展示最近 72 小时的记，粒度为分钟。</p>
+										<p>此处只展示最近 72 小时的记录，粒度为分钟。</p>
 									</div>
 									
 								</div>
@@ -41,7 +41,7 @@
 									<div class="card-inner margin-bottom-no">
 										<div id="log_chart" style="height: 300px; width: 100%;"></div>
 										
-										<script src="//cdn.bootcss.com/canvasjs/1.7.0/canvasjs.js"></script>
+										<script src="//cdn.staticfile.org/canvasjs/1.7.0/canvasjs.js"></script>
 											
 										<script type="text/javascript">
 											window.onload = function () {
